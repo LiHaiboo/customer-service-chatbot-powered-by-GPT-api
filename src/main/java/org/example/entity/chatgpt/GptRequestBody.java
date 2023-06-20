@@ -10,7 +10,6 @@ import java.util.List;
 public class GptRequestBody {
     public String model;
     public boolean stream;
-    public boolean use_standard_sse;
     public List<GptMessage> messages;
     public double temperature;
 

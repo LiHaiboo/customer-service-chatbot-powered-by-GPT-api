@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder;
 import okhttp3.*;
 import org.example.entity.chatgpt.GptMessage;
 import org.example.entity.chatgpt.GptRequestBody;
+import org.example.entity.chatgpt.GptResponse;
 import org.example.entity.minimax.MyMessage;
 import org.example.entity.minimax.MyResponse;
 import org.example.entity.minimax.Payload;
@@ -21,17 +22,10 @@ public class GptService {
     private final Gson gson = new GsonBuilder().setLenient().disableHtmlEscaping().create();
 
 
-    private String parseChunkDelta(String chunk) {
-        String jsonStr;
-        if (chunk.startsWith("data:")) {
-            jsonStr = chunk.substring(6).trim();
-        } else {
-            jsonStr = chunk;
-        }
-        //System.out.println(jsonStr);
-        MyResponse response = gson.fromJson(jsonStr, MyResponse.class);
+    private String parseReturnMessage(String msg) {
+        GptResponse response = gson.fromJson(msg, GptResponse.class);
 
-        return response.getReply();
+        return response.choices[0].message.content;
     }
 
     public void startChat() throws IOException {
@@ -62,8 +56,8 @@ public class GptService {
             Call call = client.newCall(request);
             Response response = call.execute();
             ResponseBody responseBody = response.body();
-            assert responseBody != null;
-            String responseMessage = parseChunkDelta(responseBody.string());
+            //System.out.println(responseBody.string());
+            String responseMessage = parseReturnMessage(responseBody.string());
             System.out.println("客服bot:");
             System.out.println(responseMessage);
             //将message加入请求中
