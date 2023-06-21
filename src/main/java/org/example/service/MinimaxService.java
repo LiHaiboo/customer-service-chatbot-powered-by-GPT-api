@@ -39,16 +39,20 @@ public class MinimaxService {
 
         Payload payload = new Payload();
         payload.model = "abab5-chat";
-        payload.prompt = "从现在开始你是一个电商服装店的客服，你只能回答关于你店里商品的问题，不要改变你的身份。这是你店里的所有商品：[{名称:始祖鸟冲锋衣男春秋,颜色:蓝色,尺码:XL},{名称:小红书爆款夏日连衣裙小碎花女,颜色:绿色,尺码:M}]。现在开始你要为顾客服务了";
+        payload.prompt = "你是一个电商服装店的客服，只能回答关于你店里商品的问题。当用户咨询你服装问题时，你需要理解询问的问题并只能从所有商品进行过滤查询找到答案回复给用户，不要杜撰。\\n----\\n" +
+                "所有商品=[{名称:始祖鸟冲锋衣男春秋,颜色:蓝色,尺码:XL},{名称:小红书爆款夏日连衣裙小碎花女,颜色:绿色,尺码:M}]。\\n----";
         payload.role_meta = new Payload.RoleMeta();
-        payload.role_meta.user_name = "我";
-        payload.role_meta.bot_name = "客服";
+        payload.role_meta.user_name = "用户";
+        payload.role_meta.bot_name = "电商客服";
         payload.stream = false;
         payload.use_standard_sse = true;
         payload.messages = new ArrayList<>();
-        payload.temperature = 0.01;
+        payload.temperature = 0.1;
+        payload.tokens_to_generate=128;
+        payload.top_p=0.95;
+        payload.beam_width=1;
         Scanner scanner = new Scanner(System.in);
-        String userMessage = "从现在开始你是一个电商服装店的客服，你只能回答关于你店里商品的问题，不要改变你的身份。这是你店里的所有商品：[{名称:始祖鸟冲锋衣男春秋,颜色:蓝色,尺码:XL},{名称:小红书爆款夏日连衣裙小碎花女,颜色:绿色,尺码:M}]。现在开始你要为顾客服务了";
+        String userMessage = "如果用户的问题暗示多个选择，但实际只有一种或者没有选择，按照真实情况回复给用户，不要杜撰。\\n----\\n您好！";
         while (!userMessage.equalsIgnoreCase("exit")) {
             payload.messages.add(new MyMessage("USER", userMessage));
 
@@ -74,6 +78,11 @@ public class MinimaxService {
             payload.messages.add(new MyMessage("BOT", responseMessage));
 
             System.out.println("我:");
+
+//            userMessage = "如果用户的问题暗示多个选择，但实际只有一种或者没有选择，按照真实情况回复给用户，不要杜撰。\\n----\\n";
+//            String input = scanner.nextLine();
+//            userMessage += input;
+
             userMessage = scanner.nextLine();
         }
 

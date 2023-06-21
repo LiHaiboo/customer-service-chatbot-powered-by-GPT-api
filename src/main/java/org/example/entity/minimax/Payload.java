@@ -13,6 +13,9 @@ public class Payload {
     public boolean use_standard_sse;
     public List<MyMessage> messages;
     public double temperature;
+    public int tokens_to_generate;
+    public double top_p;
+    public int beam_width;
 
     public static class RoleMeta {
         public String user_name;
